@@ -1,0 +1,21 @@
+plugins {
+    id 'cpp-library'
+}
+
+
+
+library {
+    binaries.configureEach { CppBinary binary ->
+        def compileTask = binary.compileTask.get()
+
+        compileTask.source.from fileTree(dir: "src/main/cpp", include: "**/*.cpp")
+
+        def toolChain = binary.toolChain
+        if (toolChain instanceof VisualCpp) {
+            compileTask.compilerArgs.addAll(["/TP"])
+        } else if (compileTask.targetPlatform.get().operatingSystem.isMacOsX()) {
+
+               compileTask.compilerArgs.add('-std=gnu++17')
+    }
+    }
+}

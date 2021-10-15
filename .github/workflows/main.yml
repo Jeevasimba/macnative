@@ -24,8 +24,8 @@ jobs:
       uses: gradle/wrapper-validation-action@v1
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Execute runapp
-      run: ./gradlew --info --stacktrace run 
+    - name: Execute build
+      run: ./gradlew --info --stacktrace build 
     - name: output
       uses: actions/upload-artifact@v2
       if: always()

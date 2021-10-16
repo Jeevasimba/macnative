@@ -14,8 +14,16 @@ library {
         if (toolChain instanceof VisualCpp) {
             compileTask.compilerArgs.addAll(["/TP"])
         } else if (compileTask.targetPlatform.get().operatingSystem.isMacOsX()) {
-
                compileTask.compilerArgs.add('-std=gnu++17')
-    }
+        }
+
+
+        def linkTask = linkTask.get()
+        linkTask.linkerArgs.addAll(linkTask.targetPlatform.map {
+            if (it.operatingSystem.isMacOsX()) {
+                return ['-framework', 'IOKit']
+            }
+            return []
+        })
     }
 }

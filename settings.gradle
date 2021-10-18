@@ -1,2 +1,17 @@
 rootProject.name = 'macos'
 include 'hello'
+
+pluginManagement {
+   repositories {
+      gradlePluginPortal()
+      maven { url = uri("https://repo.nokee.dev/release") }
+      maven { url = uri("https://repo.nokee.dev/snapshot") }
+   }
+   resolutionStrategy {
+      eachPlugin {
+         if (requested.id.id.startsWith("dev.nokee.")) {
+            useModule("${requested.id.id}:${requested.id.id}.gradle.plugin:0.4.0")
+         }
+      }
+   }
+}

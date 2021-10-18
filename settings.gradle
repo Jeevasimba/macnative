@@ -1,6 +1,3 @@
-rootProject.name = 'macos'
-include 'hello'
-
 pluginManagement {
    repositories {
       gradlePluginPortal()
@@ -15,3 +12,6 @@ pluginManagement {
       }
    }
 }
+
+rootProject.name = 'macos'
+include 'hello'

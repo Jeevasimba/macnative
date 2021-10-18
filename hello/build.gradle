@@ -6,6 +6,7 @@ plugins {
 
 
 library {
+    targetMachines = [machines.macOS]
     dependencies {
         nativeImplementation 'dev.nokee.framework:ApplicationServices:latest.release'
     }

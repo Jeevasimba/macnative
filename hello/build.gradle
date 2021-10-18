@@ -15,17 +15,17 @@ library {
         def toolChain = binary.toolChain
         if (toolChain instanceof VisualCpp) {
             compileTask.compilerArgs.addAll(["/TP"])
-        } else if (compileTask.targetPlatform.get().operatingSystem.isMacOsX()) {
-               compileTask.compilerArgs.add('-std=gnu++17')
+              } else if (toolChain instanceof GccCompatibleToolChain) {
+            compileTask.compilerArgs.addAll(["-l", "cpp", "-std=c++11"])
         }
-
 
         def linkTask = linkTask.get()
         linkTask.linkerArgs.addAll(linkTask.targetPlatform.map {
             if (it.operatingSystem.isMacOsX()) {
-                return ['-framework', 'IOKit']
+                return ['-framework', 'IOKit','CoreFoundation']
             }
             return []
         })
+
     }
 }

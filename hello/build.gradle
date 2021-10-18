@@ -5,6 +5,9 @@ plugins {
 
 
 library {
+    dependencies {
+        nativeImplementation 'dev.nokee.framework:ApplicationServices:latest.release'
+    }
     binaries.configureEach { CppBinary binary ->
         def compileTask = binary.compileTask.get()
 

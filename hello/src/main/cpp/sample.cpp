@@ -8,6 +8,7 @@
 #include <mach/vm_map.h>
 #include <unistd.h>
 
+
 #include "stdlib.h"
 
 
@@ -15,50 +16,31 @@ using namespace std;
 
 io_connect_t auxKeyDriverRef;
 bool driverLoaded = false;
-void initAuxKeyDriver()
-{
-    mach_port_t masterPort, service, iter;
 
-    if(IOMasterPort( bootstrap_port, &masterPort ) != KERN_SUCCESS)
-        return;
 
-    if(IOServiceGetMatchingServices(masterPort, IOServiceMatching( kIOHIDSystemClass), &iter ) != KERN_SUCCESS)
-        return;
 
-    service = IOIteratorNext( iter );
-    if(service == 0) {
-        IOObjectRelease(iter);
-        return;
-    }
 
-    if(IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &auxKeyDriverRef ) == KERN_SUCCESS)
-        driverLoaded = true;
-
-    IOObjectRelease(service);
-    IOObjectRelease(iter);
+void doKeyboard(CGKeyCode key, bool down) {
+    CGEventRef event = CGEventCreateKeyboardEvent(NULL, key, down);
+    CGEventPost(kCGHIDEventTap, event);
+    CFRelease(event);
 }
 
-void tapAuxKey(const UInt8 auxKeyCode)
-{
-    if(!driverLoaded)
-        return;
+void typeUniChar(ushort c, bool down = true, bool up = true) {
+    CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    CGEventRef down_evt = CGEventCreateKeyboardEvent(src, (CGKeyCode) 0, true);
+    CGEventRef up_evt = CGEventCreateKeyboardEvent(src, (CGKeyCode) 0, false);
 
-    NXEventData event;
-    IOGPoint loc = { 0, 0 };
+    UniChar str[] = {(UniChar)c, '\0'};
+    CGEventKeyboardSetUnicodeString(down_evt, 1, str);
+    CGEventKeyboardSetUnicodeString(up_evt, 1, str);
 
-    // down
-    UInt32 evtInfo = auxKeyCode << 16 | NX_KEYDOWN << 8;
-    bzero(&event, sizeof(NXEventData));
-    event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
-    event.compound.misc.L[0] = evtInfo;
-    if(IOHIDPostEvent( auxKeyDriverRef, NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE ) != KERN_SUCCESS)
-        return;
+    if(down)
+        CGEventPost (kCGHIDEventTap, down_evt);
+    if(up)
+        CGEventPost (kCGHIDEventTap, up_evt);
 
-    // up
-    evtInfo = auxKeyCode << 16 | NX_KEYUP << 8;
-    bzero(&event, sizeof(NXEventData));
-    event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
-    event.compound.misc.L[0] = evtInfo;
-    if(IOHIDPostEvent( auxKeyDriverRef, NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE ) != KERN_SUCCESS)
-        return;
+    CFRelease (down_evt);
+    CFRelease (up_evt);
+    CFRelease (src);
 }

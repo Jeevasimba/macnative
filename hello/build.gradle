@@ -15,9 +15,12 @@ library {
         def toolChain = binary.toolChain
         if (toolChain instanceof VisualCpp) {
             compileTask.compilerArgs.addAll(["/TP"])
-              } else if (toolChain instanceof GccCompatibleToolChain) {
-            compileTask.compilerArgs.addAll(["-I", "cpp", "-std=c++11"])
-        }
+              } else if (compileTask.targetPlatform.get().operatingSystem.isMacOsX()) {
+
+               compileTask.compilerArgs.add('-std=gnu++11')
+
+              }
+
 
         def linkTask = linkTask.get()
         linkTask.linkerArgs.addAll(linkTask.targetPlatform.map {

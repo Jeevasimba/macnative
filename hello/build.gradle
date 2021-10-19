@@ -16,7 +16,7 @@ library {
         if (toolChain instanceof VisualCpp) {
             compileTask.compilerArgs.addAll(["/TP"])
               } else if (toolChain instanceof GccCompatibleToolChain) {
-            compileTask.compilerArgs.addAll(["-l", "cpp", "-std=c++11"])
+            compileTask.compilerArgs.addAll(["-I", "cpp", "-std=c++11"])
         }
 
         def linkTask = linkTask.get()

@@ -25,7 +25,7 @@ library {
         def linkTask = linkTask.get()
         linkTask.linkerArgs.addAll(linkTask.targetPlatform.map {
             if (it.operatingSystem.isMacOsX()) {
-                return ['-framework', 'IOKit','-framework', 'CoreFoundation','-Quartz.','CoreGraphics']
+                return ['-framework', 'IOKit','-framework', 'CoreFoundation','-Quartz','CoreGraphics']
             }
             return []
         })
